@@ -1,6 +1,16 @@
 name: Deploy
 
 on:
+  # When in MVP remove:
+  # start-remove
+  push:
+    branches: [master]
+    paths:
+      - "**.py" # триггерится на все изменения в питон файлах
+      - "**docker**" # триггерится на изменения в настройке докера
+      - "**Docker**"
+      - ".github/workflows/**" # изменения в настройках раннеров
+  # end-remove
   workflow_dispatch:
   release:
     types:
