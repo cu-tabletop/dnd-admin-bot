@@ -19,6 +19,7 @@ async def main() -> None:
     # сюда добавляются обработчики
     dp.include_routers(
         handlers.start_router,
+        handlers.connection_test_router,
     )
 
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
