@@ -20,6 +20,7 @@ async def main() -> None:
     dp.include_routers(
         handlers.start_router,
         handlers.connection_test_router,
+        handlers.campaign_create_router,
     )
 
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
