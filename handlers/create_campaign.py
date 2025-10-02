@@ -1,69 +1,48 @@
-import requests
-from aiogram import Router, F, types
-from aiogram.filters import Command, StateFilter
-from aiogram.fsm.context import FSMContext
+from aiogram_dialog import Dialog, Window, DialogManager
+from aiogram_dialog.widgets.kbd import Button, Column
+from aiogram_dialog.widgets.text import Const
+from aiogram.types import CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 
-campaign_create_router = Router()
-
 class CreateCampaignStates(StatesGroup):
-    waiting_for_name = State()
+    enter_name = State()
+
+# Я так предполагаю мы эти данные будем фетчить из бд через бекенд но я не знаю 
+# как это написать щас поэтому вот так вот.
+CAMPAIGN = [
+    {"id": 1, "name": "Существующая кампания 1"},
+    {"id": 2, "name": "Существующая кампания 2"},
+]
+
+async def on_create_campaign(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+
+    await callback.message.answer("Создание новой кампании...")
 
 
-# TODO: Сейчас Телеграм возвращает ошибку, не уверен, в чём дело:
-# * Error: Telegram server says - Bad Request: can't parse entities: 
-# * Unsupported start tag "!doctype" at byte offset 55
+async def on_select_campaign(callback: CallbackQuery, button: Button, dialog_manager: DialogManager, item_id: str):
 
-@campaign_create_router.message(Command("create_campaign"))
-async def start_campaign_creation(message: types.Message, state: FSMContext):
-
-    await message.answer(text="Введите название кампании: ")
-        
-    await state.set_state(CreateCampaignStates.waiting_for_name)
+    campaign_id = int(item_id)
+    await callback.answer(f"Выбрана кампания {campaign_id}")
 
 
-@campaign_create_router.message(CreateCampaignStates.waiting_for_name)
-async def process_campaign_name(message: types.Message, state: FSMContext):
-    
-    campaign_data = message.text.strip()
-    
-    campaign_data = {
-        'telegram_id': 0,
-        'title': 0,
-        'description': 0,
-        'icon': 0,
-    }
-    
-    try:
+def get_campaigns_keyboard():
 
-        response = requests.post(
-            'http://localhost:8000/api/campaign/create',
-            json=campaign_data,
-        )
-        
-        if response.status_code == 201: 
-            await message.answer(f"Кампания {campaign_data['title']} создана")
-
-        else:
-            error_msg = response.text
-            await message.answer(f"Ошибка при создании кампании ({error_msg})")
-            
-    except Exception as e:
-        await message.answer(f"Internal Error: {str(e)}")
-    
-    await state.clear()
+    buttons = []
+    for campaign in CAMPAIGN:
+        buttons.append(Button(
+            Const(f"{campaign['name']}"),
+            id=str(campaign["id"]),
+            on_click=on_select_campaign,
+        ))
+    return Column(*buttons)
 
 
-@campaign_create_router.message(Command("cancel"))
-@campaign_create_router.message(F.text.casefold() == "cancel")
-async def cancel_creation(message: types.Message, state: FSMContext):
-
-    current_state = await state.get_state()
-
-    if current_state is None:
-        await message.answer("Уже отменена?..")
-        return
-    
-    await state.clear()
-
-    await message.answer("Создание отменено")
+create_campaign_dialog = Dialog(
+    Window(
+        Const("**Главное меню**\n\nВыберите действие:"),
+        Button(Const("Создать кампанию"), id="create", on_click=on_create_campaign),
+        Const("\nВаши кампании:"),
+        get_campaigns_keyboard(),
+        state=CreateCampaignStates.enter_name,
+    )
+)

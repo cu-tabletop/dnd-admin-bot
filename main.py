@@ -7,6 +7,7 @@ import handlers
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram_dialog import setup_dialogs
 
 
 TOKEN = os.getenv("TOKEN")
@@ -20,8 +21,11 @@ async def main() -> None:
     dp.include_routers(
         handlers.start_router,
         handlers.connection_test_router,
-        handlers.campaign_create_router,
+        handlers.main_menu_router,
+        handlers.main_menu_dialog,
     )
+
+    setup_dialogs(dp)
 
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 

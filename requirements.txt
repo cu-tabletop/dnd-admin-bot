@@ -1,2 +1,3 @@
 aiogram
 requests
+aiogram_dialog
