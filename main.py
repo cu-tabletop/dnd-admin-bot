@@ -19,10 +19,9 @@ async def main() -> None:
 
     # сюда добавляются обработчики
     dp.include_routers(
-        handlers.start_router,
         handlers.connection_test_router,
-        handlers.main_menu_router,
-        handlers.main_menu_dialog,
+        handlers.start_menu_router,
+        handlers.start_menu_dialog,
     )
 
     setup_dialogs(dp)

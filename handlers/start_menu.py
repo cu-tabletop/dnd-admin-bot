@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 
 # Создаем router для диалога
-router = Router()
+start_menu_router = Router()
 
 # Состояния для главного меню
 class MainMenuStates(StatesGroup):
@@ -21,11 +21,12 @@ SAMPLE_CAMPAIGNS = [
 
 # Обработчики кнопок
 async def on_create_campaign(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    """Обработчик создания новой кампании"""
+
     await callback.answer("Создание новой кампании...")
 
+
 async def on_select_campaign(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    """Обработчик выбора существующей кампании"""
+
     campaign_id = button.widget_id
     campaign_name = next((c["name"] for c in SAMPLE_CAMPAIGNS if str(c["id"]) == campaign_id), "Неизвестная")
     await callback.answer(f"Выбрана кампания: {campaign_name}")
@@ -44,7 +45,7 @@ def get_campaigns_keyboard():
     return Column(*buttons)
 
 # Диалог главного меню
-main_menu_dialog = Dialog(
+start_menu_dialog = Dialog(
     Window(
         Const("**Главное меню DnD бота**\n\nВыберите кампанию:"),
         
@@ -65,8 +66,8 @@ main_menu_dialog = Dialog(
 )
 
 # Обычный хендлер для команды /start
-@router.message(Command("start"))
-@router.message(Command("menu"))
+@start_menu_router.message(Command("start"))
+@start_menu_router.message(Command("menu"))
 async def cmd_main_menu(message: types.Message, dialog_manager: DialogManager):
-    """Запуск главного меню по команде"""
+    
     await dialog_manager.start(MainMenuStates.main)

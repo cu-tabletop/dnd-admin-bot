@@ -1,8 +1,11 @@
+from aiogram import Router
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.kbd import Button, Column
 from aiogram_dialog.widgets.text import Const
 from aiogram.types import CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
+
+campaign_create_router = Router()
 
 class CreateCampaignStates(StatesGroup):
     enter_name = State()
