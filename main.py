@@ -22,6 +22,8 @@ async def main() -> None:
         handlers.connection_test_router,
         handlers.start_menu_router,
         handlers.start_menu_dialog,
+        handlers.create_campaign_router,
+        handlers.create_campaign_dialog,
     )
 
     setup_dialogs(dp)
