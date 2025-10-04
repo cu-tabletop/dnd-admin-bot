@@ -10,7 +10,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram_dialog.api.entities import MediaAttachment
 
 from .start_menu import MainMenuStates
-
+from ..services import constants
 create_campaign_router = Router()
 
 
@@ -37,7 +37,15 @@ async def on_description_entered(message: Message, widget: TextInput,
 
 async def on_icon_entered(message: Message, widget: MessageInput, dialog_manager: DialogManager, **kwargs):
 
-    dialog_manager.dialog_data["icon"] = message
+    if message.photo:
+
+        photo = message.photo[-1]
+        dialog_manager.dialog_data["icon_file_id"] = photo.file_id
+
+    else:
+
+        dialog_manager.dialog_data["icon_file_id"] = constants.DEFAULT_ICON_ID
+    
     await dialog_manager.next()
 
 
@@ -87,7 +95,6 @@ async def on_cancel(callback: CallbackQuery, button: Button,
 
 async def get_confirm_data(dialog_manager: DialogManager, **kwargs):
 
-    icon = MediaAttachment(type=ContentType.PHOTO, path="")
     return {
         "name": dialog_manager.dialog_data.get("name", ""),
         "description": dialog_manager.dialog_data.get("description", "не указано"),
