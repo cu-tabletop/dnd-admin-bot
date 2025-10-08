@@ -7,6 +7,7 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 
 
+# ! Предполагается что мы будем фетчить кампании из ДБ
 start_menu_router = Router()
 
 CAMPAIGNS = [
@@ -32,7 +33,6 @@ async def on_select_campaign(callback: CallbackQuery, button: Button, dialog_man
     await callback.answer(f"Выбрана кампания: {campaign_name}")
 
 
-# ! Предполагается что мы будем фетчить кампании из ДБ
 def get_campaigns_keyboard():
     buttons = []
     for campaign in CAMPAIGNS:

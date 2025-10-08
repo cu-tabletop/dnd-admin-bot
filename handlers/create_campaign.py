@@ -4,13 +4,13 @@ from aiogram_dialog.widgets.kbd import Button, Back, Cancel, Row
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.input import TextInput, MessageInput
 from aiogram_dialog.widgets.media import DynamicMedia
+from aiogram_dialog.api.entities import MediaAttachment
 from aiogram.enums import ContentType
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.state import State, StatesGroup
-from aiogram_dialog.api.entities import MediaAttachment
 
 from .start_menu import MainMenuStates
-from ..services import constants
+
 create_campaign_router = Router()
 
 
@@ -35,16 +35,19 @@ async def on_description_entered(message: Message, widget: TextInput,
     await dialog_manager.next()
 
 
-async def on_icon_entered(message: Message, widget: MessageInput, dialog_manager: DialogManager, **kwargs):
+async def on_icon_entered(message: Message, widget: MessageInput, dialog_manager: DialogManager):
 
     if message.photo:
-
-        photo = message.photo[-1]
-        dialog_manager.dialog_data["icon_file_id"] = photo.file_id
+        dialog_manager.dialog_data["icon"] = message.photo[-1]
 
     else:
 
-        dialog_manager.dialog_data["icon_file_id"] = constants.DEFAULT_ICON_ID
+        # TODO:
+        # В данный момент если попытаться вставить пользовательскую иконку, то
+        # всё равно будет вставляться дефолтная, не уверен как мы будем работать с медиа, 
+        # поэтому пока что оставил так
+
+        dialog_manager.dialog_data["icon"] = 'DEFAULT_ICON'
     
     await dialog_manager.next()
 
@@ -59,7 +62,7 @@ async def on_skip_description(callback: CallbackQuery, button: Button,
 async def on_skip_icon(callback: CallbackQuery, button: Button,
                       dialog_manager: DialogManager):
 
-    dialog_manager.dialog_data["icon"] = ""
+    dialog_manager.dialog_data["icon"] = 'DEFAULT_ICON'
     await dialog_manager.next()
 
 
@@ -68,7 +71,7 @@ async def on_confirm(callback: CallbackQuery, button: Button,
 
     campaign_data = dialog_manager.dialog_data
     
-    # Здесь будет вызов API для создания кампании
+    # * Здесь будет вызов API для создания кампании``
     # response = requests.post('/api/campaign/create/', json=campaign_data)
 
     # POST /api/campaign/create/ требует 
@@ -77,12 +80,11 @@ async def on_confirm(callback: CallbackQuery, button: Button,
     # description - описание (до 1024 символов) (опционально)
     # icon - иконка в base64 (опционально)
     
-    await callback.message.answer(
-        f"Кампания '{campaign_data['name']}' создана!\n"
-        f"Описание: {campaign_data.get('description', 'не указано')}\n"
-        f"Иконка: {campaign_data.get('icon', 'не указана')}"
-    )
-    
+    # Сразу после вызова создания кампании, фетчим список кампаний т.к.
+    # следующим же действием переходим в основное меню (где нужен список).
+    # Возможно имеет смысл здесь оставить sleep(t)
+
+
     await dialog_manager.start(MainMenuStates.main)
 
 
@@ -95,13 +97,14 @@ async def on_cancel(callback: CallbackQuery, button: Button,
 
 async def get_confirm_data(dialog_manager: DialogManager, **kwargs):
 
+    path_to_default =  "services/default_icon.jpg"
+    icon = MediaAttachment(type=ContentType.PHOTO, path=path_to_default)
+
     return {
         "name": dialog_manager.dialog_data.get("name", ""),
         "description": dialog_manager.dialog_data.get("description", "не указано"),
-        "icon": dialog_manager.dialog_data.get("icon")
+        "icon": icon
     }
-
-
 
 create_campaign_dialog = Dialog(
     Window(
@@ -143,7 +146,7 @@ create_campaign_dialog = Dialog(
         DynamicMedia('icon'),
         Format(
             "**Подтверждение создания**\n\n"
-            "Название: {name}\n "
+            "Название: {name}\n"
             "Описание: {description}\n"
             "Создать кампанию?"
         ),
