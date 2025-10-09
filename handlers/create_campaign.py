@@ -1,13 +1,13 @@
 from aiogram import Router
+from aiogram.enums import ContentType
+from aiogram.types import CallbackQuery, Message
+from aiogram.fsm.state import State, StatesGroup
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.kbd import Button, Back, Cancel, Row
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.input import TextInput, MessageInput
 from aiogram_dialog.widgets.media import DynamicMedia
 from aiogram_dialog.api.entities import MediaAttachment
-from aiogram.enums import ContentType
-from aiogram.types import CallbackQuery, Message
-from aiogram.fsm.state import State, StatesGroup
 
 from .start_menu import MainMenuStates
 
@@ -84,7 +84,6 @@ async def on_confirm(callback: CallbackQuery, button: Button,
     # следующим же действием переходим в основное меню (где нужен список).
     # Возможно имеет смысл здесь оставить sleep(t)
 
-
     await dialog_manager.start(MainMenuStates.main)
 
 
@@ -97,8 +96,8 @@ async def on_cancel(callback: CallbackQuery, button: Button,
 
 async def get_confirm_data(dialog_manager: DialogManager, **kwargs):
 
-    path_to_default =  "services/default_icon.jpg"
-    icon = MediaAttachment(type=ContentType.PHOTO, path=path_to_default)
+    PATH_TO_DEFAULT_ICON =  "services/default_icon.jpg"
+    icon = MediaAttachment(type=ContentType.PHOTO, path=PATH_TO_DEFAULT_ICON)
 
     return {
         "name": dialog_manager.dialog_data.get("name", ""),

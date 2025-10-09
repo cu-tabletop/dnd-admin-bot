@@ -1,0 +1,44 @@
+from aiogram import Router
+from aiogram.types import CallbackQuery, Message
+from aiogram.fsm.state import State, StatesGroup
+from aiogram_dialog import Dialog, Window, DialogManager
+from aiogram_dialog.widgets.kbd import Button, Cancel
+from aiogram_dialog.widgets.text import Const
+from aiogram_dialog.widgets.input import TextInput
+
+from .campaign_interaction import CampaignInteractionStates, campaign_name
+from .start_menu import CAMPAIGNS
+
+add_admin_router = Router()
+
+
+class AddAdminStates(StatesGroup):
+    main = State()
+
+
+async def on_add_admin(message: Message, callback: CallbackQuery, 
+                       dialog_manager: DialogManager, text: str):
+    
+    dialog_manager.dialog_data["admin_id"] = text
+    await callback.message.answer(f"В кампанию {campaign_name} добавлен ещё один ГМ")
+    await dialog_manager.start(CampaignInteractionStates.main)
+
+
+async def get_data(dialog_manager: DialogManager, **kwargs):
+
+    return {
+        "campaign_name": CAMPAIGNS[0]["name"],
+        "icon": CAMPAIGNS[0]["icon"]
+    }
+
+add_admin_dialog = Dialog(
+    Window(
+        Const("**Добавление гейм-мастера к кампании {campaign_name}"),
+        TextInput(
+            id="admin_id_input",
+            on_success=on_add_admin
+        ),
+        Cancel(Const("Отмена")),
+    ),
+    getter=get_data
+)

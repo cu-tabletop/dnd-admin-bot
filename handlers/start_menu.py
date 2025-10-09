@@ -10,9 +10,11 @@ from aiogram.fsm.state import State, StatesGroup
 # ! Предполагается что мы будем фетчить кампании из ДБ
 start_menu_router = Router()
 
+PATH_TO_DEFAULT_ICON =  "services/default_icon.jpg"
+
 CAMPAIGNS = [
-    {"id": 1, "name": "Существующая кампания 1"},
-    {"id": 2, "name": "Существующая кампания 2"},
+    {"id": 1, "name": "Существующая кампания 1", "icon": PATH_TO_DEFAULT_ICON},
+    {"id": 2, "name": "Существующая кампания 2", "icon": PATH_TO_DEFAULT_ICON},
 ]
 
 
