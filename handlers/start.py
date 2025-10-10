@@ -1,9 +1,12 @@
-from aiogram import Router
-from aiogram.filters import CommandStart
+from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.filters import CommandStart
+from aiogram_dialog import DialogManager, StartMode
 
-start_router = Router()
+from dialogs.states import CharacterManagementSG
 
-@start_router.message(CommandStart())
-async def start_command(message: Message) -> None:
-    await message.answer(text="Этот бот пока что ничего не делает")
+router = Router()
+
+@router.message(CommandStart())
+async def start_command(message: Message, dialog_manager: DialogManager):
+    await dialog_manager.start(CharacterManagementSG.company_selection, mode=StartMode.RESET_STACK)

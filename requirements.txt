@@ -1,2 +1,7 @@
-aiogram
 requests
+aiogram==3.22
+aiogram-dialog==2.4
+aiohttp==3.9.0
+pydantic==2.5.0
+pydantic-settings==2.0.3
+python-dotenv==1.0.0
