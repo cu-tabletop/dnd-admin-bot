@@ -1,0 +1,17 @@
+services:
+  app:
+    restart: on-failure:3
+    build:
+      context: .
+    environment:
+      TOKEN: ${TOKEN}
+      BACKEND_URL: ${BACKEND_URL:-http://backend:8000/}
+  backend:
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    image: pacable/dndbackend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-verysecretkey}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-TRUE}
+      DATABASE: SQLITE3
