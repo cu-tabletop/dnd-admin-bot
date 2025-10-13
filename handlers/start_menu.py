@@ -6,17 +6,16 @@ from aiogram_dialog.widgets.text import Const
 from aiogram.types import CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 
-
-# ! Предполагается что мы будем фетчить кампании из ДБ
 start_menu_router = Router()
 
 PATH_TO_DEFAULT_ICON =  "services/default_icon.jpg"
 
+# ! Предполагается что мы будем фетчить кампании из ДБ
+# ! Данный функционал ещё не реализован
 CAMPAIGNS = [
     {"id": 1, "name": "Существующая кампания 1", "icon": PATH_TO_DEFAULT_ICON},
     {"id": 2, "name": "Существующая кампания 2", "icon": PATH_TO_DEFAULT_ICON},
 ]
-
 
 class MainMenuStates(StatesGroup):
     main = State()
@@ -48,7 +47,13 @@ def get_campaigns_keyboard():
     return Column(*buttons)
 
 
-# * Диалог Главного / Стартового Меню
+@start_menu_router.message(Command("start"))
+@start_menu_router.message(Command("menu"))
+async def cmd_main_menu(message: types.Message, dialog_manager: DialogManager):
+    
+    await dialog_manager.start(MainMenuStates.main)
+
+
 start_menu_dialog = Dialog(
     Window(
         Const("**Главное меню DnD бота**\n\nВыберите кампанию:"),
@@ -62,9 +67,3 @@ start_menu_dialog = Dialog(
         state=MainMenuStates.main,
     )
 )
-
-@start_menu_router.message(Command("start"))
-@start_menu_router.message(Command("menu"))
-async def cmd_main_menu(message: types.Message, dialog_manager: DialogManager):
-    
-    await dialog_manager.start(MainMenuStates.main)

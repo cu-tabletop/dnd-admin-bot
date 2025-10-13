@@ -32,7 +32,6 @@ async def on_start_add_admin(message: Message, button: Button,
     await dialog_manager.start(AddAdminStates.main)
 
 
-
 async def on_chars_transition(message: Message, button: Button,
                                dialog_manager: DialogManager):
 

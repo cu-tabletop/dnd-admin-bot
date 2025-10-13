@@ -105,6 +105,7 @@ async def get_confirm_data(dialog_manager: DialogManager, **kwargs):
         "icon": icon
     }
 
+
 create_campaign_dialog = Dialog(
     Window(
         Const("**Создание новой кампании**\n\nВведите название кампании:"),

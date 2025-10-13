@@ -31,6 +31,7 @@ async def get_data(dialog_manager: DialogManager, **kwargs):
         "icon": CAMPAIGNS[0]["icon"]
     }
 
+
 add_admin_dialog = Dialog(
     Window(
         Const("**Добавление гейм-мастера к кампании {campaign_name}"),
