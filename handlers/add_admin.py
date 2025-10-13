@@ -6,7 +6,7 @@ from aiogram_dialog.widgets.kbd import Button, Cancel
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.input import TextInput
 
-from .campaign_interaction import CampaignInteractionStates, campaign_name
+from .campaign_interaction import CampaignInteractionStates
 from .start_menu import CAMPAIGNS
 
 add_admin_router = Router()
@@ -20,7 +20,7 @@ async def on_add_admin(message: Message, callback: CallbackQuery,
                        dialog_manager: DialogManager, text: str):
     
     dialog_manager.dialog_data["admin_id"] = text
-    await callback.message.answer(f"В кампанию {campaign_name} добавлен ещё один ГМ")
+    await callback.message.answer(f"В кампанию {CAMPAIGNS[0]["name"]} добавлен ещё один ГМ")
     await dialog_manager.start(CampaignInteractionStates.main)
 
 
@@ -39,6 +39,7 @@ add_admin_dialog = Dialog(
             on_success=on_add_admin
         ),
         Cancel(Const("Отмена")),
-    ),
-    getter=get_data
+    state=AddAdminStates.main,
+    getter=get_data,
+    )
 )
