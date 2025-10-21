@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from dotenv import load_dotenv, find_dotenv
 
 import handlers
 
@@ -8,10 +9,12 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
+load_dotenv(find_dotenv())
 
 TOKEN = os.getenv("TOKEN")
 if TOKEN is None:
     raise Exception("Null token provided")
+
 
 async def main() -> None:
     dp = Dispatcher()
@@ -19,12 +22,14 @@ async def main() -> None:
     # сюда добавляются обработчики
     dp.include_routers(
         handlers.start_router,
-        handlers.connection_test_router,
+        handlers.
+        # handlers.connection_test_router,
     )
 
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     await dp.start_polling(bot)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

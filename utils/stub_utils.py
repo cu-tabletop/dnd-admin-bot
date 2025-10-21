@@ -8,16 +8,16 @@
 #     """Переключение режима заглушек"""
 #     if enable is None:
 #         enable = not settings.USE_API_STUBS
-    
+
 #     settings.USE_API_STUBS = enable
 #     mode = "ВКЛЮЧЕН" if enable else "ВЫКЛЮЧЕН"
 #     logger.info(f"Режим заглушек API {mode}")
-    
+
 #     # Пересоздаем клиент API
 #     from services.api_client import api_client
 #     global api_client
 #     api_client = create_api_client()
-    
+
 #     return enable
 
 # def get_stub_status() -> dict:
