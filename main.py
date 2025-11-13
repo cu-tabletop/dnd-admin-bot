@@ -26,8 +26,10 @@ async def main() -> None:
         handlers.create_campaign_dialog,
         handlers.campaign_interaction_router,
         handlers.campaign_interaction_dialog,
-        handlers.add_admin_router,
-        handlers.add_admin_dialog,
+        handlers.add_master_router,
+        handlers.add_master_dialog,
+        handlers.characters_display_router,
+        handlers.characters_display_dialog,
     )
 
     setup_dialogs(dp)
